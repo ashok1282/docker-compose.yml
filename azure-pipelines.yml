@@ -7,26 +7,9 @@ pool:
 steps:
 
 - script: |
-    echo "Current directory:"
-    pwd
-
-    echo "Files in source directory:"
-    ls -la "$(Build.SourcesDirectory)"
-
-    echo "Docker Compose file:"
-    cat "$(Build.SourcesDirectory)/docker-compose.yml"
-
-    echo "Docker Compose version:"
-    docker compose version
-
-  displayName: Check Docker Compose File
-
-
-- script: |
     docker compose \
       -f "$(Build.SourcesDirectory)/docker-compose.yml" \
       build
-
   displayName: Build Containers
 
 
@@ -34,23 +17,40 @@ steps:
     docker compose \
       -f "$(Build.SourcesDirectory)/docker-compose.yml" \
       up -d
-
   displayName: Start Containers
 
 
 - script: |
+    echo "Running containers:"
     docker compose \
       -f "$(Build.SourcesDirectory)/docker-compose.yml" \
       ps
-
   displayName: Check Containers
 
 
 - script: |
+    echo "Testing API container..."
+    curl -f http://localhost:3000
+
+    echo ""
+    echo "API test successful."
+  displayName: Test API
+
+
+- script: |
+    echo "Testing Web container..."
+    curl -f http://localhost:8080
+
+    echo ""
+    echo "Web test successful."
+  displayName: Test Web
+
+
+- script: |
+    echo "Container logs:"
     docker compose \
       -f "$(Build.SourcesDirectory)/docker-compose.yml" \
       logs
-
   displayName: Show Container Logs
 
 
@@ -58,5 +58,4 @@ steps:
     docker compose \
       -f "$(Build.SourcesDirectory)/docker-compose.yml" \
       down
-
   displayName: Stop Containers
