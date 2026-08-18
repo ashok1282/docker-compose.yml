@@ -1,13 +1,13 @@
-services:
+const http = require("http");
 
-  api:
-    build:
-      context: ./app
-    ports:
-      - "3000:3000"
+const server = http.createServer((req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "text/plain"
+    });
 
-  web:
-    build:
-      context: ./web
-    ports:
-      - "8080:80"
+    res.end("Hello from API container!");
+});
+
+server.listen(3000, "0.0.0.0", () => {
+    console.log("API running on port 3000");
+});
