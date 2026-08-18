@@ -7,25 +7,56 @@ pool:
 steps:
 
 - script: |
+    echo "Current directory:"
+    pwd
+
+    echo "Files in source directory:"
+    ls -la "$(Build.SourcesDirectory)"
+
+    echo "Docker Compose file:"
+    cat "$(Build.SourcesDirectory)/docker-compose.yml"
+
+    echo "Docker Compose version:"
     docker compose version
-  displayName: Check Docker Compose
+
+  displayName: Check Docker Compose File
+
 
 - script: |
-    docker compose build
+    docker compose \
+      -f "$(Build.SourcesDirectory)/docker-compose.yml" \
+      build
+
   displayName: Build Containers
 
+
 - script: |
-    docker compose up -d
+    docker compose \
+      -f "$(Build.SourcesDirectory)/docker-compose.yml" \
+      up -d
+
   displayName: Start Containers
 
+
 - script: |
-    docker compose ps
+    docker compose \
+      -f "$(Build.SourcesDirectory)/docker-compose.yml" \
+      ps
+
   displayName: Check Containers
 
-- script: |
-    docker compose logs
-  displayName: Show Container Logs
 
 - script: |
-    docker compose down
+    docker compose \
+      -f "$(Build.SourcesDirectory)/docker-compose.yml" \
+      logs
+
+  displayName: Show Container Logs
+
+
+- script: |
+    docker compose \
+      -f "$(Build.SourcesDirectory)/docker-compose.yml" \
+      down
+
   displayName: Stop Containers
